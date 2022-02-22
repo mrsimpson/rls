@@ -1,7 +1,7 @@
 {
-  "name": "@avallone-io/rls",
+  "name": "@mrsimpson/rls",
   "version": "1.2.0",
-  "description": "Row level security package for TypeORM and NestJS",
+  "description": "Row level security package for TypeORM",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -19,23 +19,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Avallone-io/rls.git"
+    "url": "git+https://github.com/mrsimpson/rls.git"
   },
   "author": "Raul Stelescu",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Avallone-io/rls/issues"
+    "url": "https://github.com/mrsimpson/rls/issues"
   },
-  "homepage": "https://github.com/Avallone-io/rls#readme",
+  "homepage": "https://github.com/mrsimpson/rls#readme",
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@nestjs/common": "^7.6.15",
-    "@nestjs/core": "^7.6.15",
-    "@nestjs/platform-express": "^7.6.18",
-    "@nestjs/testing": "^7.6.17",
-    "@nestjs/typeorm": "^7.1.5",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.1",
     "@types/chai": "^4.2.22",
@@ -73,9 +68,6 @@
     "typescript": "^4.4.3"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.6.15",
-    "@nestjs/core": "^7.6.15",
-    "@nestjs/typeorm": "^7.1.5",
     "express": "^4.17.1",
     "typeorm": "^0.2.35"
   },

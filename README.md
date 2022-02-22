@@ -9,7 +9,7 @@ This solution does not work by having multiple connections to database (eg: one 
 
 # Install
 
-> $ npm install @avallone-io/rls
+> $ npm install @mrsimpson/rls
 
 # Usage
 
@@ -39,10 +39,10 @@ For example, assuming an express application:
 app.use((req, res, next) => {
   const connection = getConnection(); // get default typeorm connection
 
-  // get tenantId and actorId from somewhere (headers/token etc)
+  // get organizationId and actorId from somewhere (headers/token etc)
   const rlsConnection = new RLSConnection(connection, {
     actorId,
-    tenantId,
+    organizationId,
   });
 
   res.locals.connection = rlsConnection;
@@ -55,58 +55,3 @@ await userRepo.find(); // will return only the results where the db rls policy a
 ```
 
 In the above example, you'll have to work with the supplied connection. Calling TypeORM function directly will work with the original connection which is not RLS aware.
-
-## NestJS integration
-
-If you are using NestJS, this library provides helpers for making your connections and queries tenant aware.
-
-Create your TypeORM config and load the TypeORM module using `.forRoot`. Then you'll need to load the `RLSModule` with `.forRoot` where you'll define where to take the `tenantId` and `actorId` from. The second part is that you now need to replace the `TypeOrmModule.forFeature` with `RLSModule.forFeature`.
-You can inject non-entity dependent Modules and Providers. First array imports modules, second array injects providers.
-
-When using `RLSModule.forRoot` it will set your `scope` to `REQUEST`! Be sure you understand the implications of this and especially read about the request-scoped authentication strategy on [Nestjs docs](https://docs.nestjs.com/security/authentication#request-scoped-strategies).
-
-```typescript
-app.controller.ts
-
-@Module({
-  imports: [
-    TypeOrmModule.forRoot(...),
-    RLSModule.forRoot([/*Module*/], [/*Service*/], (req: Request, /*serviceInstance*/) => {
-      // You can take the tenantId and actorId from headers/tokens etc
-      const tenantId = req.headers['tenant_id'];
-      const actorId = req.headers['actor_id'];
-
-      return {
-        actorId,
-        tenantId,
-      };
-    }),
-    RLSModule.forFeature([Post, Category]) // <- this
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
-```
-
-Now you can use the normal module injection for repositories, services etc.
-
-To inject the RLS connection within a service, you can do by using `@Inject(TENANT_CONNECTION)` where `TENANT_CONNECTION` is imported from `@avallone-io/rls`.
-
-```typescript
-export class AppService {
-  constructor(
-    @InjectRepository(Category)
-    private categoryRepo: Repository<Category>,
-    @Inject(TENANT_CONNECTION)
-    private connection: RLSConnection,
-  ) {}
-
-  // you can now use categoryRepo as normal but it will
-  // be scoped for RLS. Same with the connection.
-}
-```
-
-Same as before, do not use the TypeORM functions directly (eg: `getConnection()`) as that will give you the default connection to the database, not the wrapped instance.
-
-For more specific examples, check the `test/nestjs/src`.
