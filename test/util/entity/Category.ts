@@ -6,7 +6,7 @@ export class Category extends BaseEntity {
   id: number;
 
   @Column()
-  tenantId: number;
+  organizationId: number;
 
   @Column()
   name: string;
@@ -17,7 +17,7 @@ export class Category extends BaseEntity {
   toJson() {
     return {
       id: this.id,
-      tenantId: this.tenantId,
+      organizationId: this.organizationId,
       name: this.name,
       numberValue: this.numberValue,
     };

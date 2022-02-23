@@ -17,7 +17,7 @@ import {
   createData,
   createRunners,
   createTeantUser,
-  expectSameCategoryByTenantId,
+  expectSameCategoryByorganizationId,
   generateQueryStrings,
   releaseRunners,
   resetMultiTenant,
@@ -46,12 +46,12 @@ describe('RLSPostgresQueryRunner', () => {
 
   const fooTenant: TenancyModelOptions = {
     actorId: 10,
-    tenantId: 1,
+    organizationId: 1,
   };
 
   const barTenant: TenancyModelOptions = {
     actorId: 20,
-    tenantId: 2,
+    organizationId: 2,
   };
 
   before(async () => {
@@ -108,7 +108,7 @@ describe('RLSPostgresQueryRunner', () => {
 
   it('should have the tenant and actor set', () => {
     expect(queryRunner).to.have.property('actorId').and.to.be.equal(10);
-    expect(queryRunner).to.have.property('tenantId').and.to.be.equal(1);
+    expect(queryRunner).to.have.property('organizationId').and.to.be.equal(1);
   });
 
   it('should use the RLSConnection', () => {
@@ -171,12 +171,12 @@ describe('RLSPostgresQueryRunner', () => {
         expect(result.currentUser).to.be.equal(tenantDbUser);
       });
 
-      it('should have the tenantId set', async () => {
+      it('should have the organizationId set', async () => {
         const [result] = await queryRunner.query(
-          `select current_setting('rls.tenant_id') as "tenantId"`,
+          `select current_setting('rls.org_id') as "organizationId"`,
         );
 
-        expect(parseInt(result.tenantId)).to.be.equal(fooTenant.tenantId);
+        expect(parseInt(result.organizationId)).to.be.equal(fooTenant.organizationId);
       });
 
       it('should have the actor_id set', async () => {
@@ -192,7 +192,7 @@ describe('RLSPostgresQueryRunner', () => {
           .to.eventually.have.lengthOf(1)
           .and.to.deep.equal(
             categories
-              .filter(x => x.tenantId === fooTenant.tenantId)
+              .filter(x => x.organizationId === fooTenant.organizationId)
               .map(x => x.toJson()),
           );
       });
@@ -204,29 +204,29 @@ describe('RLSPostgresQueryRunner', () => {
             posts
               .filter(
                 x =>
-                  x.tenantId === fooTenant.tenantId &&
+                  x.organizationId === fooTenant.organizationId &&
                   x.userId === fooTenant.actorId,
               )
               .map(x => x.toJson()),
           );
       });
 
-      it('should not overwrite the tenantId', async () => {
+      it('should not overwrite the organizationId', async () => {
         return expect(
-          queryRunner.query(`select * from category where "tenantId" in ($1)`, [
+          queryRunner.query(`select * from category where "organizationId" in ($1)`, [
             categories
-              .filter(x => x.tenantId !== fooTenant.tenantId)
-              .map(x => x.tenantId)
+              .filter(x => x.organizationId !== fooTenant.organizationId)
+              .map(x => x.organizationId)
               .join(','),
           ]),
         ).to.eventually.have.lengthOf(0);
       });
 
-      it('should not overwrite the tenantId or actorId', async () => {
+      it('should not overwrite the organizationId or actorId', async () => {
         return expect(
           queryRunner.query(
-            `select * from post where "tenantId" in ($1) or "userId" in ($2)`,
-            [barTenant.tenantId, barTenant.actorId],
+            `select * from post where "organizationId" in ($1) or "userId" in ($2)`,
+            [barTenant.organizationId, barTenant.actorId],
           ),
         ).to.eventually.have.lengthOf(0);
       });
@@ -246,7 +246,7 @@ describe('RLSPostgresQueryRunner', () => {
         await expect(
           queryRunner.query(
             `insert into category values (default, $1, 'allowed')`,
-            [fooTenant.tenantId],
+            [fooTenant.organizationId],
           ),
         ).to.be.fulfilled;
 
@@ -259,7 +259,7 @@ describe('RLSPostgresQueryRunner', () => {
         return expect(
           queryRunner.query(
             `insert into post values (default, $1, $2, 'not allowed')`,
-            [fooTenant.tenantId, 11],
+            [fooTenant.organizationId, 11],
           ),
         ).to.be.rejectedWith(
           QueryFailedError,
@@ -271,7 +271,7 @@ describe('RLSPostgresQueryRunner', () => {
         await expect(
           queryRunner.query(
             `insert into post values (default, $1, $2, 'allowed')`,
-            [fooTenant.tenantId, fooTenant.actorId],
+            [fooTenant.organizationId, fooTenant.actorId],
           ),
         ).to.be.fulfilled;
 
@@ -310,14 +310,14 @@ describe('RLSPostgresQueryRunner', () => {
         expect(result.currentUser).to.be.equal('postgres');
       });
 
-      it('should not have the tenantId set', async () => {
+      it('should not have the organizationId set', async () => {
         return expect(
           originalConnection.query(
-            `select current_setting('rls.tenant_id') as "tenantId"`,
+            `select current_setting('rls.org_id') as "organizationId"`,
           ),
         ).to.be.rejectedWith(
           QueryFailedError,
-          /unrecognized configuration parameter "rls.tenant_id"/,
+          /unrecognized configuration parameter "rls.org_id"/,
         );
       });
 
@@ -351,7 +351,7 @@ describe('RLSPostgresQueryRunner', () => {
 
         return expect(
           originalConnection.query(
-            `select * from category where "tenantId" = 66`,
+            `select * from category where "organizationId" = 66`,
           ),
         ).to.eventually.have.lengthOf(1);
       });
@@ -417,8 +417,8 @@ describe('RLSPostgresQueryRunner', () => {
         const fooCategories = await queryRunner.query(fooQueryString);
         const barCategories = await localQueryRunner.query(barQueryString);
 
-        expectSameCategoryByTenantId(barCategories, categories, barTenant);
-        expectSameCategoryByTenantId(fooCategories, categories, fooTenant);
+        expectSameCategoryByorganizationId(barCategories, categories, barTenant);
+        expectSameCategoryByorganizationId(fooCategories, categories, fooTenant);
       });
 
       it('should not have race conditions when first query takes longer', async () => {
@@ -450,7 +450,7 @@ describe('RLSPostgresQueryRunner', () => {
         );
 
         expect(queryPrototypeStub).to.have.been.calledWith(barQueryString);
-        expectSameCategoryByTenantId(
+        expectSameCategoryByorganizationId(
           barTenantCategoryResult,
           categories,
           barTenant,
@@ -461,7 +461,7 @@ describe('RLSPostgresQueryRunner', () => {
         const fooTenantCategoryResult = await fooTenantCategoryPromise;
 
         expect(pending).to.be.false;
-        expectSameCategoryByTenantId(
+        expectSameCategoryByorganizationId(
           fooTenantCategoryResult,
           categories,
           fooTenant,
@@ -509,7 +509,7 @@ describe('RLSPostgresQueryRunner', () => {
 
         await Promise.all(queryPromises).then(results => {
           results.forEach((result, indx) => {
-            expectSameCategoryByTenantId(
+            expectSameCategoryByorganizationId(
               result,
               categories,
               tenantsOrder[indx],

@@ -21,7 +21,7 @@ describe('RLSPostgresDriver', () => {
 
   const tenantModelOptions: TenancyModelOptions = {
     actorId: 10,
-    tenantId: 1,
+    organizationId: 1,
   };
 
   before(async () => {
@@ -51,7 +51,7 @@ describe('RLSPostgresDriver', () => {
 
   it('should have the tenant and actor set', () => {
     expect(driver).to.have.property('actorId').and.to.be.equal(10);
-    expect(driver).to.have.property('tenantId').and.to.be.equal(1);
+    expect(driver).to.have.property('organizationId').and.to.be.equal(1);
   });
 
   it('should use the RLSConnection', () => {
@@ -77,8 +77,8 @@ describe('RLSPostgresDriver', () => {
       const qr = driver.createQueryRunner('master');
 
       expect(qr)
-        .to.have.property('tenantId')
-        .and.be.equal(tenantModelOptions.tenantId);
+        .to.have.property('organizationId')
+        .and.be.equal(tenantModelOptions.organizationId);
       expect(qr)
         .to.have.property('actorId')
         .and.be.equal(tenantModelOptions.actorId);

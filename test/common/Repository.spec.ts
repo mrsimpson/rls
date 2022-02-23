@@ -37,12 +37,12 @@ describe('Repository', function () {
 
   const fooTenant: TenancyModelOptions = {
     actorId: 10,
-    tenantId: 1,
+    organizationId: 1,
   };
 
   const barTenant: TenancyModelOptions = {
     actorId: 20,
-    tenantId: 2,
+    organizationId: 2,
   };
 
   before(async () => {
@@ -294,12 +294,12 @@ describe('Repository', function () {
       const rlsUserRepo = fooConnection.getRepository(User);
 
       const originalRepoParentUser = originalUserRepo.create({
-        tenantId: fooTenant.tenantId as number,
+        organizationId: fooTenant.organizationId as number,
         userId: fooTenant.actorId as number,
         title: 'Original Parent',
       });
       const rlsRepoParentUser = rlsUserRepo.create({
-        tenantId: fooTenant.tenantId as number,
+        organizationId: fooTenant.organizationId as number,
         userId: fooTenant.actorId as number,
         title: 'RLS Parent',
       });
@@ -319,12 +319,12 @@ describe('Repository', function () {
       const rlsUserRepo = fooConnection.getRepository(User);
 
       const originalRepoParentUser = originalUserRepo.create({
-        tenantId: fooTenant.tenantId as number,
+        organizationId: fooTenant.organizationId as number,
         userId: fooTenant.actorId as number,
         title: 'Original Parent',
       });
       const rlsRepoParentUser = rlsUserRepo.create({
-        tenantId: fooTenant.tenantId as number,
+        organizationId: fooTenant.organizationId as number,
         userId: fooTenant.actorId as number,
         title: 'RLS Parent',
       });

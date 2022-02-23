@@ -1,7 +1,7 @@
-export type TenantId = string | number;
+export type OrganizationId = string | number;
 export type ActorId = string | number;
 
 export interface TenancyModelOptions {
-  tenantId: TenantId;
+  organizationId: OrganizationId;
   actorId: ActorId;
 }

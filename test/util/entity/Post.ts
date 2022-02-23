@@ -14,7 +14,7 @@ export class Post extends BaseEntity {
   id: number;
 
   @Column()
-  tenantId: number;
+  organizationId: number;
 
   @Column()
   userId: number;
@@ -29,7 +29,7 @@ export class Post extends BaseEntity {
   toJson() {
     return {
       id: this.id,
-      tenantId: this.tenantId,
+      organizationId: this.organizationId,
       userId: this.userId,
       title: this.title,
     };

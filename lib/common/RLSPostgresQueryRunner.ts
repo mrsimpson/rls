@@ -5,11 +5,11 @@ import { IsolationLevel } from 'typeorm/driver/types/IsolationLevel';
 import {
   ActorId,
   TenancyModelOptions,
-  TenantId,
+  OrganizationId,
 } from '../interfaces/tenant-options.interface';
 
 export class RLSPostgresQueryRunner extends PostgresQueryRunner {
-  tenantId: TenantId = null;
+  organizationId: OrganizationId = null;
   actorId: ActorId = null;
   isTransactionCommand = false;
 
@@ -23,7 +23,7 @@ export class RLSPostgresQueryRunner extends PostgresQueryRunner {
   }
 
   private setOptions(tenancyModelOptions: TenancyModelOptions) {
-    this.tenantId = tenancyModelOptions.tenantId;
+    this.organizationId = tenancyModelOptions.organizationId;
     this.actorId = tenancyModelOptions.actorId;
   }
 
@@ -34,14 +34,14 @@ export class RLSPostgresQueryRunner extends PostgresQueryRunner {
   ): Promise<any> {
     if (!this.isTransactionCommand) {
       await super.query(
-        `set "rls.tenant_id" = '${this.tenantId}'; set "rls.actor_id" = '${this.actorId}';`,
+        `set "rls.org_id" = '${this.organizationId}'; set "rls.actor_id" = '${this.actorId}';`,
       );
     }
 
     const result = await super.query(queryString, params, useStructuredResult);
 
     if (!this.isTransactionCommand) {
-      await super.query(`reset rls.actor_id; reset rls.tenant_id;`);
+      await super.query(`reset rls.actor_id; reset rls.org_id;`);
     }
     return result;
   }

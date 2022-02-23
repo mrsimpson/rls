@@ -35,12 +35,12 @@ describe('QueryBuilder', function () {
 
   const fooTenant: TenancyModelOptions = {
     actorId: 10,
-    tenantId: 1,
+    organizationId: 1,
   };
 
   const barTenant: TenancyModelOptions = {
     actorId: 20,
-    tenantId: 2,
+    organizationId: 2,
   };
 
   before(async () => {

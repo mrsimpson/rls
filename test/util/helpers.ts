@@ -65,7 +65,7 @@ export async function setupResolvers(
     queryPrototypeStub.withArgs(queryStrings[i]).resolves(resolver());
   }
 }
-export function expectSameCategoryByTenantId(
+export function expectSameCategoryByorganizationId(
   returnedCategories: any[],
   categories: Category[],
   tenant: TenancyModelOptions,
@@ -74,7 +74,7 @@ export function expectSameCategoryByTenantId(
     .to.have.lengthOf(1)
     .and.to.be.deep.equal(
       categories
-        .filter(c => c.tenantId === tenant.tenantId)
+        .filter(c => c.organizationId === tenant.organizationId)
         .map(c => c.toJson()),
     );
 }
@@ -119,11 +119,11 @@ export function runQueryTests(
     ]);
   });
 
-  it('gets called with right tenantId and actor_id', async () => {
+  it('gets called with right organizationId and actor_id', async () => {
     await queryRunner.query(`select 'foo'`);
 
     expect(queryPrototypeSpy.firstCall).to.have.been.calledWith(
-      `set "rls.tenant_id" = '${tenantModelOptions.tenantId}'; set "rls.actor_id" = '${tenantModelOptions.actorId}';`,
+      `set "rls.org_id" = '${tenantModelOptions.organizationId}'; set "rls.actor_id" = '${tenantModelOptions.actorId}';`,
     );
   });
 
@@ -131,7 +131,7 @@ export function runQueryTests(
     await queryRunner.query(`select 'foo'`);
 
     expect(queryPrototypeSpy.lastCall).to.have.been.calledWith(
-      `reset rls.actor_id; reset rls.tenant_id;`,
+      `reset rls.actor_id; reset rls.org_id;`,
     );
   });
 
@@ -150,9 +150,9 @@ export function expectTenantData(
     data
       .filter(x => {
         if (x instanceof Post) {
-          return x.tenantId === tenant.tenantId && x.userId === tenant.actorId;
+          return x.organizationId === tenant.organizationId && x.userId === tenant.actorId;
         } else {
-          return x.tenantId === tenant.tenantId;
+          return x.organizationId === tenant.organizationId;
         }
       })
       .map(x => (toJson ? x.toJson() : x)),
@@ -167,9 +167,9 @@ export function expectTenantDataEventually(
   return expectQuery.to.eventually.have.lengthOf(total).and.to.deep.equal(
     data.filter(x => {
       if (x instanceof Post) {
-        return x.tenantId === tenant.tenantId && x.userId === tenant.actorId;
+        return x.organizationId === tenant.organizationId && x.userId === tenant.actorId;
       } else {
-        return x.tenantId === tenant.tenantId;
+        return x.organizationId === tenant.organizationId;
       }
     }),
   );
@@ -188,9 +188,9 @@ export function expectPostDataRelation(
     .and.to.deep.equal(
       data.filter(x => {
         return (
-          x.tenantId === tenant.tenantId &&
+          x.organizationId === tenant.organizationId &&
           x.userId === tenant.actorId &&
-          x.categories.filter(c => c.tenantId === tenant.tenantId)
+          x.categories.filter(c => c.organizationId === tenant.organizationId)
         );
       }),
     );
@@ -205,30 +205,30 @@ export async function createData(
 
   await categoryRepo.save({
     name: 'FooCategory',
-    tenantId: fooTenant.tenantId as number,
+    organizationId: fooTenant.organizationId as number,
   });
   await categoryRepo.save({
     name: 'BarCategory',
-    tenantId: barTenant.tenantId as number,
+    organizationId: barTenant.organizationId as number,
   });
 
   const fooCategory = await categoryRepo.findOne({ name: 'FooCategory' });
   const barCategory = await categoryRepo.findOne({ name: 'BarCategory' });
 
   await postRepo.save({
-    tenantId: fooTenant.tenantId as number,
+    organizationId: fooTenant.organizationId as number,
     userId: fooTenant.actorId as number,
     title: 'Foo post',
     categories: [fooCategory],
   });
   await postRepo.save({
-    tenantId: fooTenant.tenantId as number,
+    organizationId: fooTenant.organizationId as number,
     userId: (fooTenant.actorId as number) + 1,
     title: 'Foofoo post',
     categories: [fooCategory],
   });
   await postRepo.save({
-    tenantId: barTenant.tenantId as number,
+    organizationId: barTenant.organizationId as number,
     userId: barTenant.actorId as number,
     title: 'Bar post',
     categories: [barCategory],
@@ -270,14 +270,14 @@ export async function setupMultiTenant(
 
   await queryRunner.query(`
     CREATE POLICY tenant_current_tenant_isolation ON public."category" for ALL
-    USING ("tenantId" = current_setting('rls.tenant_id')::int4 )
-    with check ("tenantId" = current_setting('rls.tenant_id')::int4 );`);
+    USING ("organizationId" = current_setting('rls.org_id')::int4 )
+    with check ("organizationId" = current_setting('rls.org_id')::int4 );`);
 
   await queryRunner.query(`
     CREATE POLICY tenant_current_tenant_isolation ON public."post" for ALL
-    USING ("tenantId" = current_setting('rls.tenant_id')::int4 
+    USING ("organizationId" = current_setting('rls.org_id')::int4 
           AND "userId" = current_setting('rls.actor_id')::int4  )
-    with check ("tenantId" = current_setting('rls.tenant_id')::int4 
+    with check ("organizationId" = current_setting('rls.org_id')::int4 
           AND "userId" = current_setting('rls.actor_id')::int4  );`);
 }
 export async function setQueryRunnerRole(

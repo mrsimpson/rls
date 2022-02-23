@@ -3,14 +3,14 @@ import { RLSPostgresDriver } from '../common/RLSPostgresDriver';
 import {
   ActorId,
   TenancyModelOptions,
-  TenantId,
+  OrganizationId,
 } from '../interfaces/tenant-options.interface';
 import { RLSPostgresQueryRunner } from './RLSPostgresQueryRunner';
 
 export class RLSConnection extends Connection {
   readonly driver: RLSPostgresDriver;
 
-  tenantId: TenantId = null;
+  organizationId: OrganizationId = null;
   actorId: ActorId = null;
 
   constructor(
@@ -21,7 +21,7 @@ export class RLSConnection extends Connection {
     Object.assign(this, connection);
     Object.assign(this.relationLoader, { connection: this });
 
-    this.tenantId = tenancyModelOptions.tenantId;
+    this.organizationId = tenancyModelOptions.organizationId;
     this.actorId = tenancyModelOptions.actorId;
 
     const metadatas: EntityMetadata[] = [];

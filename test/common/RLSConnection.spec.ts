@@ -17,7 +17,7 @@ describe('RLSConnection', () => {
 
   const tenantModelOptions: TenancyModelOptions = {
     actorId: 10,
-    tenantId: 1,
+    organizationId: 1,
   };
 
   before(async () => {
@@ -45,7 +45,7 @@ describe('RLSConnection', () => {
 
   it('should have the tenant and actor set', () => {
     expect(connection).to.have.property('actorId').and.to.be.equal(10);
-    expect(connection).to.have.property('tenantId').and.to.be.equal(1);
+    expect(connection).to.have.property('organizationId').and.to.be.equal(1);
   });
 
   it('should not have the same manager', () => {
@@ -92,7 +92,7 @@ describe('RLSConnection', () => {
     const postRepo = connection.getRepository(Post);
     const post = postRepo.create();
     post.title = 'Foo';
-    post.tenantId = tenantModelOptions.tenantId as number;
+    post.organizationId = tenantModelOptions.organizationId as number;
     post.userId = tenantModelOptions.actorId as number;
     await postRepo.save(post);
 
@@ -129,8 +129,8 @@ describe('RLSConnection', () => {
       const qr = connection.createQueryRunner();
 
       expect(qr)
-        .to.have.property('tenantId')
-        .and.be.equal(tenantModelOptions.tenantId);
+        .to.have.property('organizationId')
+        .and.be.equal(tenantModelOptions.organizationId);
       expect(qr)
         .to.have.property('actorId')
         .and.be.equal(tenantModelOptions.actorId);
@@ -140,7 +140,7 @@ describe('RLSConnection', () => {
       const postRepo = connection.getRepository(Post);
       const post = postRepo.create();
       post.title = 'Foo';
-      post.tenantId = tenantModelOptions.tenantId as number;
+      post.organizationId = tenantModelOptions.organizationId as number;
       post.userId = tenantModelOptions.actorId as number;
       await postRepo.save(post);
 
