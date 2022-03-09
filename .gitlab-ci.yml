@@ -20,3 +20,9 @@ publish_artifact_npm_stage:
     - !reference [.secret_management,services]
   script:
     - !reference [.secret_management,script]
+
+publish_artifact_npm_release:
+  services: 
+    - !reference [.secret_management,services]
+  script:
+    - !reference [.secret_management,script]
