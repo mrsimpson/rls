@@ -3,6 +3,7 @@ include:
   # include release_artifact_npm of type product
   # 📚 https://git.tech.rz.db.de/pipeship/pipeline-modules/products/release_artifact_npm
   - https://bahnhub.tech.rz.db.de/artifactory/pipeship-generic-release-local/release/0.8.0-20220308100438-cc12e14-product-release_artifact_npm.yaml
+  - https://bahnhub.tech.rz.db.de/artifactory/pipeship-generic-release-local/release/0.5.0-20220301102253-e87ae8e-reference-secret_management.yaml
 
 variables:
   LY_JOB_DISABLED: 'true'
@@ -14,15 +15,3 @@ test_artifact_npm:
   script:
     - npm ci
     - npm run test:ci
-
-publish_artifact_npm_stage:
-  services: 
-    - !reference [.secret_management,services]
-  script:
-    - !reference [.secret_management,script]
-
-publish_artifact_npm_release:
-  services: 
-    - !reference [.secret_management,services]
-  script:
-    - !reference [.secret_management,script]
