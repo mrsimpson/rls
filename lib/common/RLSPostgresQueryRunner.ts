@@ -9,8 +9,7 @@ import {
 } from '../interfaces/tenant-options.interface';
 
 export class RLSPostgresQueryRunner extends PostgresQueryRunner {
-  organizationId: OrganizationId = null;
-  actorId: ActorId = null;
+  tenancyModelOptions: TenancyModelOptions = null;
   isTransactionCommand = false;
 
   constructor(
@@ -23,8 +22,7 @@ export class RLSPostgresQueryRunner extends PostgresQueryRunner {
   }
 
   private setOptions(tenancyModelOptions: TenancyModelOptions) {
-    this.organizationId = tenancyModelOptions.organizationId;
-    this.actorId = tenancyModelOptions.actorId;
+    this.tenancyModelOptions = tenancyModelOptions;
   }
 
   async query(
@@ -34,7 +32,7 @@ export class RLSPostgresQueryRunner extends PostgresQueryRunner {
   ): Promise<any> {
     if (!this.isTransactionCommand) {
       await super.query(
-        `set "rls.org_id" = '${this.organizationId}'; set "rls.actor_id" = '${this.actorId}';`,
+        `set "rls.org_id" = '${this.tenancyModelOptions.organizationId}'; set "rls.actor_id" = '${this.tenancyModelOptions.actorId}';`,
       );
     }
 

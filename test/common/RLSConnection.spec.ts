@@ -128,10 +128,11 @@ describe('RLSConnection', () => {
     it('should have the right tenant and actor', () => {
       const qr = connection.createQueryRunner();
 
-      expect(qr)
+      expect(qr).to.have.property('tenancyModelOptions');
+      expect(qr.tenancyModelOptions)
         .to.have.property('organizationId')
         .and.be.equal(tenantModelOptions.organizationId);
-      expect(qr)
+      expect(qr.tenancyModelOptions)
         .to.have.property('actorId')
         .and.be.equal(tenantModelOptions.actorId);
     });

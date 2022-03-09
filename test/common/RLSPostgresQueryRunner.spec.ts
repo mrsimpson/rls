@@ -107,8 +107,13 @@ describe('RLSPostgresQueryRunner', () => {
   });
 
   it('should have the tenant and actor set', () => {
-    expect(queryRunner).to.have.property('actorId').and.to.be.equal(10);
-    expect(queryRunner).to.have.property('organizationId').and.to.be.equal(1);
+    expect(queryRunner).to.have.property('tenancyModelOptions');
+    expect(queryRunner.tenancyModelOptions)
+      .to.have.property('organizationId')
+      .and.be.equal(1);
+    expect(queryRunner.tenancyModelOptions)
+      .to.have.property('actorId')
+      .and.be.equal(10);
   });
 
   it('should use the RLSConnection', () => {
@@ -176,7 +181,9 @@ describe('RLSPostgresQueryRunner', () => {
           `select current_setting('rls.org_id') as "organizationId"`,
         );
 
-        expect(parseInt(result.organizationId)).to.be.equal(fooTenant.organizationId);
+        expect(parseInt(result.organizationId)).to.be.equal(
+          fooTenant.organizationId,
+        );
       });
 
       it('should have the actor_id set', async () => {
@@ -213,12 +220,15 @@ describe('RLSPostgresQueryRunner', () => {
 
       it('should not overwrite the organizationId', async () => {
         return expect(
-          queryRunner.query(`select * from category where "organizationId" in ($1)`, [
-            categories
-              .filter(x => x.organizationId !== fooTenant.organizationId)
-              .map(x => x.organizationId)
-              .join(','),
-          ]),
+          queryRunner.query(
+            `select * from category where "organizationId" in ($1)`,
+            [
+              categories
+                .filter(x => x.organizationId !== fooTenant.organizationId)
+                .map(x => x.organizationId)
+                .join(','),
+            ],
+          ),
         ).to.eventually.have.lengthOf(0);
       });
 
@@ -417,8 +427,16 @@ describe('RLSPostgresQueryRunner', () => {
         const fooCategories = await queryRunner.query(fooQueryString);
         const barCategories = await localQueryRunner.query(barQueryString);
 
-        expectSameCategoryByorganizationId(barCategories, categories, barTenant);
-        expectSameCategoryByorganizationId(fooCategories, categories, fooTenant);
+        expectSameCategoryByorganizationId(
+          barCategories,
+          categories,
+          barTenant,
+        );
+        expectSameCategoryByorganizationId(
+          fooCategories,
+          categories,
+          fooTenant,
+        );
       });
 
       it('should not have race conditions when first query takes longer', async () => {
