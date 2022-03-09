@@ -1,16 +1,16 @@
 {
-  "name": "@mrsimpson/rls",
-  "version": "1.2.0",
-  "description": "Row level security package for TypeORM",
+  "name": "@fermata/rls",
+  "version": "0.1.0",
+  "description": "Row level security package for TypeORM. Original code by Raul Stelescu, ISC-license",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "docker-compose -f test/docker-compose.yml run --rm rls-test && npm run postgres:down",
+    "test:ci": "echo \"not supported yet\"",
     "test:mocha": "mocha -r ts-node/register -r tsconfig-paths/register --file ./test/util/test-setup.ts --bail --exit --recursive --timeout 2000 ./test/**/*{.spec.ts,.*.spec.ts}",
     "lint": "eslint \"{src,apps,lib,test}/**/*.ts\"",
     "postgres:up": "docker-compose -f test/docker-compose.yml up -d postgres",
     "postgres:down": "docker-compose -f test/docker-compose.yml down",
-    "prepublish": "tsc --project tsconfig.build.json",
     "build": "tsc --project tsconfig.build.json",
     "coverage": "npm run postgres:up && npm run coverage:test && npm run postgres:down",
     "coverage:test": "nyc npm run test:mocha",
@@ -19,14 +19,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrsimpson/rls.git"
+    "url": "git+https://git.tech.rz.db.de/fermata/forks/rls.git"
   },
-  "author": "Raul Stelescu",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mrsimpson/rls/issues"
-  },
-  "homepage": "https://github.com/mrsimpson/rls#readme",
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
@@ -64,8 +58,8 @@
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.6",
     "ts-node": "^10.2.1",
-    "typeorm": "^0.2.35",
-    "typescript": "^4.4.3"
+    "typeorm": "0.2.43",
+    "typescript": "^4.6.2"
   },
   "peerDependencies": {
     "express": "^4.17.1",
