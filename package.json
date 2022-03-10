@@ -67,7 +67,7 @@
     "typeorm": "^0.2.35"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://bahnhub.tech.rz.db.de/"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
