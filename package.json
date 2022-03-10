@@ -66,9 +66,6 @@
     "express": "^4.17.1",
     "typeorm": "^0.2.35"
   },
-  "publishConfig": {
-    "registry": "https://bahnhub.tech.rz.db.de/"
-  },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",
     "extension": [
