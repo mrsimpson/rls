@@ -11,6 +11,7 @@
     "lint": "eslint \"{src,apps,lib,test}/**/*.ts\"",
     "postgres:up": "docker-compose -f test/docker-compose.yml up -d postgres",
     "postgres:down": "docker-compose -f test/docker-compose.yml down",
+    "prepublish": "tsc --project tsconfig.build.json",
     "build": "tsc --project tsconfig.build.json",
     "coverage": "npm run postgres:up && npm run coverage:test && npm run postgres:down",
     "coverage:test": "nyc npm run test:mocha",
