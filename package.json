@@ -2,7 +2,6 @@
   "name": "@fermata/rls",
   "version": "0.1.0",
   "description": "Row level security package for TypeORM. Original code by Raul Stelescu, ISC-license",
-  "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
