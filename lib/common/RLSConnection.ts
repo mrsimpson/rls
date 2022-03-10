@@ -1,17 +1,12 @@
 import { Connection, EntityMetadata, ReplicationMode } from 'typeorm';
 import { RLSPostgresDriver } from '../common/RLSPostgresDriver';
-import {
-  ActorId,
-  TenancyModelOptions,
-  OrganizationId,
-} from '../interfaces/tenant-options.interface';
+import { TenancyModelOptions } from '../interfaces/tenant-options.interface';
 import { RLSPostgresQueryRunner } from './RLSPostgresQueryRunner';
 
 export class RLSConnection extends Connection {
   readonly driver: RLSPostgresDriver;
 
-  organizationId: OrganizationId = null;
-  actorId: ActorId = null;
+  tenancyModelOptions: TenancyModelOptions;
 
   constructor(
     connection: Connection,
@@ -21,8 +16,7 @@ export class RLSConnection extends Connection {
     Object.assign(this, connection);
     Object.assign(this.relationLoader, { connection: this });
 
-    this.organizationId = tenancyModelOptions.organizationId;
-    this.actorId = tenancyModelOptions.actorId;
+    this.tenancyModelOptions = tenancyModelOptions;
 
     const metadatas: EntityMetadata[] = [];
 

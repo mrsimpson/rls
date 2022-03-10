@@ -2,11 +2,7 @@ import { ReplicationMode } from 'typeorm';
 import { PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
 import { PostgresQueryRunner } from 'typeorm/driver/postgres/PostgresQueryRunner';
 import { IsolationLevel } from 'typeorm/driver/types/IsolationLevel';
-import {
-  ActorId,
-  TenancyModelOptions,
-  OrganizationId,
-} from '../interfaces/tenant-options.interface';
+import { TenancyModelOptions } from '../interfaces/tenant-options.interface';
 
 export class RLSPostgresQueryRunner extends PostgresQueryRunner {
   tenancyModelOptions: TenancyModelOptions = null;
@@ -18,10 +14,6 @@ export class RLSPostgresQueryRunner extends PostgresQueryRunner {
     tenancyModelOptions: TenancyModelOptions,
   ) {
     super(driver, mode);
-    this.setOptions(tenancyModelOptions);
-  }
-
-  private setOptions(tenancyModelOptions: TenancyModelOptions) {
     this.tenancyModelOptions = tenancyModelOptions;
   }
 
